@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Sweet Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #333, #333);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f61;
+      padding: 1em 0;
+      text-align: center;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav ul li a:hover {
+      text-decoration: underline;
+    }
+    .hero {
+      text-align: center;
+      padding: 3em 1em;
+      background: linear-gradient(to right, #FFD5C0, #FFF4C0);
+      color: white;
+    }
+    .hero h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+    .hero form input {
+      padding: 0.5em;
+      font-size: 1em;
+      width: 250px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 0.5em;
+    }
+    .hero form button {
+      padding: 0.5em 1em;
+      font-size: 1em;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .hero form button:hover {
+      background-color: #e4574f;
+    }
+    .featured {
+      padding: 2em;
+      background-color: #E2725B;
+      text-align: center;
+    }
+    .featured h2 {
+      margin-bottom: 1em;
+      color: #e4e0e0;
+    }
+    .card-grid {
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+    }
+    .card {
+      background-color: #fff4c0;
+      padding: 1em;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 200px;
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1em 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Browse</a></li>
+        <li><a href="post.html">Post</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="chat.html">Chat</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Find Your Perfect Place</h1>
+      <form action="search.html" method="GET">
+        <input type="text" name="query" placeholder="Search by location, type...">
+        <button type="submit">Search</button>
+      </form>
+    </section>
+
+    <section class="featured">
+      <h2>Featured Listings</h2>
+        <div class="card-grid">
+        <div class="card">🏠 Cozy Family Flat</div>
+        <div class="card">🏖️ Seasonal Living</div>
+        <div class="card">🏢 Shared Apartment</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Sweet Home by Anan. \ rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,151 @@
+rom OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
+import random
+
+# Global configuration and state
+window_width, window_height = 800, 600
+sphere_list = []
+
+is_frozen = False
+movement_speed = 5
+ball_size = 5
+blink_interval = 500  # milliseconds: toggles every 500ms -> full cycle = 1 sec
+is_blinking = False   # flag to track blinking mode
+
+class Sphere:
+    def __init__(self, xpos, ypos):
+        self.x = xpos
+        self.y = ypos
+        # Choose a random diagonal direction: one of the four possibilities.
+        self.velocity = random.choice([(-1, 1), (-1, -1), (1, 1), (1, -1)])
+        # Assign a random color
+        self.original_color = [random.random(), random.random(), random.random()]
+        # Initially, the sphere uses its original color.
+        self.color = self.original_color.copy()
+
+    def update_position(self):
+        global is_frozen, movement_speed, window_width, window_height
+        if not is_frozen:
+            dx, dy = self.velocity
+            self.x += dx * movement_speed
+            self.y += dy * movement_speed
+
+        # Bounce off the vertical walls
+        if self.x <= 0:
+            self.x = 0
+            dx = abs(self.velocity[0])
+            self.velocity = (dx, self.velocity[1])
+        elif self.x >= window_width:
+            self.x = window_width
+            dx = -abs(self.velocity[0])
+            self.velocity = (dx, self.velocity[1])
+        # Bounce off the horizontal walls
+        if self.y <= 0:
+            self.y = 0
+            dy = abs(self.velocity[1])
+            self.velocity = (self.velocity[0], dy)
+        elif self.y >= window_height:
+            self.y = window_height
+            dy = -abs(self.velocity[1])
+            self.velocity = (self.velocity[0], dy)
+
+def window_resize(w, h):
+    glViewport(0, 0, w, h)
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluOrtho2D(0, w, 0, h)
+    glMatrixMode(GL_MODELVIEW)
+
+def render_scene():
+    glClear(GL_COLOR_BUFFER_BIT)
+    glLoadIdentity()
+    glPointSize(ball_size)
+    glBegin(GL_POINTS)
+    for sphere in sphere_list:
+        glColor3fv(sphere.color)
+        glVertex2f(sphere.x, sphere.y)
+    glEnd()
+    glutSwapBuffers()
+
+def process_mouse_input(button, state, xpos, ypos):
+    global is_blinking
+    if state == GLUT_DOWN:
+        if button == GLUT_RIGHT_BUTTON:
+            # Right-click: spawn a new sphere at the clicked location.
+            # Note: Convert the y-coordinate since OpenGL's origin is at the bottom.
+            sphere_list.append(Sphere(xpos, window_height - ypos))
+            print("Added sphere at:", xpos, window_height - ypos)
+        elif button == GLUT_LEFT_BUTTON:
+            # Left-click toggles blinking mode.
+            if is_blinking:
+                is_blinking = False
+                # Reset each sphere's color to its original color.
+                for sphere in sphere_list:
+                    sphere.color = sphere.original_color.copy()
+                print("Blinking stopped.")
+            else:
+                is_blinking = True
+                print("Blinking started.")
+    glutPostRedisplay()
+
+def adjust_properties(key, x, y):
+    global is_frozen, movement_speed
+    if key == b' ':
+        is_frozen = not is_frozen
+    # Use 's' key to decrease speed and 'd' key to increase speed.
+    elif key == b's':
+        movement_speed = max(0.5, movement_speed - 0.5)
+        print("Speed decreased to", movement_speed)
+    elif key == b'd':
+        movement_speed += 0.5
+        print("Speed increased to", movement_speed)
+    glutPostRedisplay()
+
+def modify_speed(key, x, y):
+    global movement_speed
+    if key == GLUT_KEY_UP:
+        movement_speed += 0.5
+        print("Speed increased to", movement_speed)
+    elif key == GLUT_KEY_DOWN:
+        movement_speed = max(0.5, movement_speed - 0.5)
+        print("Speed decreased to", movement_speed)
+    glutPostRedisplay()
+
+def timer_update(value):
+    if not is_frozen:
+        for sphere in sphere_list:
+            sphere.update_position()
+    glutPostRedisplay()
+    glutTimerFunc(16, timer_update, 0)
+
+def blinking_timer(value):
+    if is_blinking:
+        # For each sphere, toggle between its original color and black.
+        for sphere in sphere_list:
+            if sphere.color != [0.0, 0.0, 0.0]:
+                sphere.color = [0.0, 0.0, 0.0]
+            else:
+                sphere.color = sphere.original_color.copy()
+    glutPostRedisplay()
+    glutTimerFunc(blink_interval, blinking_timer, 0)
+
+# GLUT initialization and callback registration (without a main function)
+glutInit()
+glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
+glutInitWindowSize(window_width, window_height)
+glutCreateWindow(b"Colorful Blinking Spheres")
+glClearColor(0, 0, 0, 1)
+glPointSize(ball_size)
+
+glutDisplayFunc(render_scene)
+glutReshapeFunc(window_resize)
+glutMouseFunc(process_mouse_input)
+glutKeyboardFunc(adjust_properties)
+glutSpecialFunc(modify_speed)
+glutTimerFunc(16, timer_update, 0)
+glutTimerFunc(blink_interval, blinking_timer, 0)
+glutMainLoop()
+
+
+
